@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="th" class="walk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0e1c">
+<!-- เว็บนี้ให้เข้าจากลิงก์หรือ QR เท่านั้น ไม่ให้เครื่องมือค้นหาเก็บเข้าผลค้นหา -->
+<meta name="robots" content="noindex, nofollow, noimageindex">
+<title>สิทธินนท์ สร้อยทองดี (ออมสิน) · พอร์ตโฟลิโอ</title>
+<meta name="description" content="พอร์ตโฟลิโอของนายสิทธินนท์ สร้อยทองดี (ออมสิน) โรงเรียนวัดสุทธิวราราม เดินชมห้องจัดแสดงผลงานแบบสามมิติ">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%232a3cff' stroke='%23ffd400' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Noto+Sans+Thai:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<noscript><style>
+  html, html body { height: auto !important; overflow: auto !important; position: static !important; }
+  #c, .hud, #gate, #viewer { display: none !important; }
+  #plain { display: block !important; }
+</style></noscript>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<canvas id="c" tabindex="0" aria-label="ห้องจัดแสดงผลงานสามมิติของออมสิน เลื่อนหรือปัดเพื่อเดินชม กด Enter เพื่อเปิดรูปที่อยู่ตรงหน้า"></canvas>
+
+<div class="hud" id="hud">
+  <header class="top">
+    <div class="me"><b>OMSIN</b><small id="roomName"></small></div>
+    <div class="top-btns">
+      <button class="btn ghost" id="pics" type="button" hidden>ดูรูปในห้องนี้</button>
+      <button class="btn" id="toEnd" type="button">ติดต่อผม</button>
+    </div>
+  </header>
+
+  <div class="title" id="title">
+    <h1>SITTINON<br>SOITHONGDEE</h1>
+    <p>สิทธินนท์ สร้อยทองดี (ออมสิน) พอร์ตโฟลิโอ 2569</p>
+  </div>
+
+  <div class="cap off" id="cap" aria-live="polite"><div class="tag"></div><p class="say"></p><a class="btn" target="_blank" rel="noopener" hidden></a><button class="btn" type="button" hidden></button></div>
+
+  <section class="end" id="end" aria-hidden="true">
+    <h2>มาคุยกัน</h2>
+    <p>สิทธินนท์ สร้อยทองดี (ออมสิน) โรงเรียนวัดสุทธิวราราม ยื่นสมัครสาขาวิชานวัตกรรมระบบสารสนเทศ คณะบริหารธุรกิจ มทร.กรุงเทพ</p>
+    <a class="btn" href="https://instagram.com/medeow_GT" target="_blank" rel="noopener">Instagram @medeow_GT</a>
+    <div class="end-more">
+      <button class="again" id="again" type="button">เดินชมอีกรอบ</button>
+      <button class="again" id="endPlain" type="button">อ่านแบบหน้าเว็บธรรมดา</button>
+    </div>
+  </section>
+
+  <div class="hint" id="hint">เลื่อนเพื่อเดินเข้าไป</div>
+  <div class="tip" id="tip">กดเพื่อดูรูป</div>
+  <div class="bar" id="barBox"><i id="bar"></i></div>
+</div>
+
+<div class="gate" id="gate">
+  <div class="seal"><div><b>ออมสิน</b><span>2569</span></div></div>
+  <p class="who">SITTINON SOITHONGDEE</p>
+  <div class="load" aria-hidden="true"><i id="loadBar"></i></div>
+  <button id="enter" type="button" disabled>กำลังโหลด</button>
+  <small id="gateNote">ห้องจัดแสดงผลงานสามมิติ เลื่อนเมาส์หรือปัดนิ้วเพื่อเดิน กดที่รูปเพื่อดูภาพขยาย</small>
+  <button class="textlink" id="goPlain" type="button">ดูแบบหน้าเว็บธรรมดา</button>
+</div>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vTitle" hidden>
+  <div class="v-stage" id="vStage">
+    <img id="vImg" alt="" draggable="false">
+  </div>
+  <button class="v-btn v-close" id="vClose" type="button" aria-label="ปิดรูป">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+  </button>
+  <button class="v-btn v-nav v-prev" id="vPrev" type="button" aria-label="รูปก่อนหน้า">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 4l-8 8 8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="v-btn v-nav v-next" id="vNext" type="button" aria-label="รูปถัดไป">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="v-info">
+    <div class="v-words">
+      <p class="v-kind" id="vKind"></p>
+      <h2 id="vTitle"></h2>
+      <p class="v-text" id="vText"></p>
+    </div>
+    <div class="v-tools">
+      <span class="v-count" id="vCount"></span>
+      <button class="v-btn" id="vOut" type="button" aria-label="ซูมออก">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="v-btn" id="vIn" type="button" aria-label="ซูมเข้า">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="rTitle" hidden>
+  <div class="r-scroll" id="rScroll" tabindex="0">
+    <article class="r-page">
+      <p class="r-kind">STATEMENT OF PURPOSE</p>
+      <h2 id="rTitle">SOP ฉบับเต็ม</h2>
+      <p class="r-who">สิทธินนท์ สร้อยทองดี (ออมสิน)</p>
+      <div class="r-body" id="rBody"></div>
+      <button class="btn r-done" id="rDone" type="button">ปิด</button>
+    </article>
+  </div>
+  <button class="v-btn v-close" id="rClose" type="button" aria-label="ปิด SOP ฉบับเต็ม">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<!-- หน้าแบบธรรมดา: ใช้เมื่อเครื่องเปิดฉากสามมิติไม่ได้ หรือผู้ชมเลือกเอง และเป็นแหล่งข้อมูลรูปของฉากสามมิติด้วย -->
+<main id="plain" hidden>
+  <header class="p-hero">
+    <p class="p-kicker">พอร์ตโฟลิโอ 2569</p>
+    <h1>สิทธินนท์ สร้อยทองดี <span>(ออมสิน)</span></h1>
+    <p>โรงเรียนวัดสุทธิวราราม แผนการเรียนภาษาอังกฤษ เกรดเฉลี่ยสะสม (GPAX) 3.57</p>
+    <p>ยื่นสมัครสาขาวิชานวัตกรรมระบบสารสนเทศ คณะบริหารธุรกิจ มทร.กรุงเทพ</p>
+    <p class="p-note" id="plainNote" hidden></p>
+    <a class="btn" id="to3d" href="./">เดินชมแบบสามมิติ</a>
+  </header>
+
+  <section class="p-sec" id="sop">
+    <h2>SOP เหตุผลที่ผมเลือกสาขานี้</h2>
+    <p>สี่เรื่องจาก SOP ของผม ตามลำดับย่อหน้า ฉบับเต็มอยู่ถัดลงไป</p>
+    <ol class="p-keys">
+      <li><b>ติดตามเศรษฐกิจและเทคโนโลยี</b><span>โลกเปลี่ยนแปลงอย่างรวดเร็ว และเราต้องศึกษาเรื่องการลงทุนและเรียนรู้เครื่องมือใหม่ๆ เพื่อให้เท่าทัน</span></li>
+      <li><b>โปรแกรมจำลองเสียงพากย์ ทำด้วย Claude Code</b><span>ผมเป็นคนกำหนดโจทย์ ออกแบบขั้นตอนการทำงานของโปรแกรม และทดสอบปรับแก้จนได้เสียงที่พอใจ</span></li>
+      <li><b>เกม Industrialist กับการมองระบบ</b><span>เกมนี้ฝึกให้ผมมองภาพรวมของระบบ หาจุดคอขวด และวางแผนให้ทรัพยากรที่มีจำกัดเกิดประโยชน์สูงสุด</span></li>
+      <li><b>เป้าหมายหลังเรียนจบ</b><span>นักวิเคราะห์ระบบหรือนักวิเคราะห์ข้อมูลทางธุรกิจ → เก็บออม 5–10 ปี → ธุรกิจดิจิทัลของตัวเอง</span></li>
+    </ol>
+    <h3>SOP ฉบับเต็ม</h3>
+    <div class="p-sop" id="sopText">
+      <p>สวัสดีครับ ผมนายสิทธินนท์ สร้อยทองดี ชื่อเล่น ออมสิน เกิดและเติบโตในกรุงเทพมหานคร จบชั้นประถมศึกษาจากโรงเรียนสารสาสน์พิทยา และศึกษาต่อที่โรงเรียนวัดสุทธิวราราม ผมติดตามข่าวเศรษฐกิจและเทคโนโลยีใหม่ๆ อยู่เสมอ จึงเห็นว่าโลกเปลี่ยนแปลงอย่างรวดเร็ว และเราต้องศึกษาเรื่องการลงทุนและเรียนรู้เครื่องมือใหม่ๆ เพื่อให้เท่าทัน ตอนนี้ผมเริ่มศึกษาพื้นฐานการลงทุนด้วยตัวเอง แม้ยังไม่ได้ลงทุนจริง เพราะผมตั้งใจทำความเข้าใจให้ดีก่อนว่าธุรกิจแต่ละแห่งสร้างรายได้อย่างไร และเทคโนโลยีอย่าง AI กำลังเปลี่ยนวิธีทำธุรกิจอย่างไร</p>
+      <p>ปัจจุบันผมสนใจ Claude Code เครื่องมือเขียนโปรแกรมด้วย AI ของบริษัท Anthropic และได้ใช้สร้างโปรเจกต์ของตัวเองหลายชิ้น ชิ้นที่ผมภูมิใจที่สุดคือโปรแกรมจำลองเสียงเพื่อช่วยพากย์หนังและคลิปวิดีโอ ผู้ใช้เพียงพิมพ์บทพูด โปรแกรมก็จะสร้างเสียงพากย์ออกมาให้ ช่วยลดเวลาและค่าใช้จ่ายในการหาคนพากย์สำหรับงานคลิป ผมเป็นคนกำหนดโจทย์ ออกแบบขั้นตอนการทำงานของโปรแกรม และทดสอบปรับแก้จนได้เสียงที่พอใจ ส่วน AI ช่วยเขียนโค้ดและอธิบายส่วนที่ผมยังไม่เข้าใจ โปรแกรมนี้ใช้คอมพิวเตอร์เรนเดอร์ค่อนข้างหนัก ผมจึงยังไม่เปิดให้ผู้อื่นใช้ แต่ทำให้ผมได้เรียนรู้เรื่องข้อจำกัดด้านประสิทธิภาพ และกำลังศึกษาแนวทางพัฒนาต่อ เช่น การเลือกใช้โมเดลที่เล็กลง หรือย้ายการประมวลผลไปไว้บนระบบคลาวด์แทนเครื่องของตัวเอง ผมตระหนักด้วยว่าเทคโนโลยีเสียงสังเคราะห์ต้องใช้อย่างรับผิดชอบ จึงตั้งใจใช้เฉพาะเสียงที่ได้รับอนุญาตจากเจ้าของเสียงเท่านั้น</p>
+      <p>นอกจากนี้ ผมชอบเล่นเกม Industrialist ซึ่งต้องวางแผนกลยุทธ์เพื่อพัฒนาระบบต่างๆ ทั้งการวางท่อ การเดินสายไฟ และการจัดสรรทรัพยากรเพื่อบรรลุเป้าหมาย เกมนี้ฝึกให้ผมมองภาพรวมของระบบ หาจุดคอขวด และวางแผนให้ทรัพยากรที่มีจำกัดเกิดประโยชน์สูงสุด ซึ่งผมเห็นว่าเชื่อมโยงกับการวิเคราะห์และออกแบบระบบ อันเป็นหัวใจของงานด้านระบบสารสนเทศในธุรกิจ และเป็นแรงบันดาลใจให้ผมสมัครเข้าศึกษาที่สาขาวิชานวัตกรรมระบบสารสนเทศ คณะบริหารธุรกิจ มหาวิทยาลัยเทคโนโลยีราชมงคลกรุงเทพ สิ่งที่ดึงดูดผมเป็นพิเศษคือหลักสูตรนี้สอนทั้งด้านธุรกิจและเทคโนโลยีควบคู่กัน และมีแผนการเรียนแบบสหกิจศึกษา ซึ่งจะทำให้ผมได้ทำงานจริงในสถานประกอบการตั้งแต่ยังเรียนอยู่</p>
+      <p>หลังสำเร็จการศึกษา ผมตั้งเป้าหมายที่จะทำงานเป็นนักวิเคราะห์ระบบหรือนักวิเคราะห์ข้อมูลทางธุรกิจ เพื่อสร้างความมั่นคงในชีวิตและสั่งสมประสบการณ์จริงในอุตสาหกรรม พร้อมเก็บออมเงินประมาณ 5–10 ปี เพื่อนำมาเป็นทุนก่อตั้งธุรกิจของตัวเอง โดยผมสนใจธุรกิจด้านดิจิทัลที่นำเทคโนโลยีอย่าง AI มาช่วยแก้ปัญหาให้ลูกค้า ผมเชื่อว่าความรู้ทั้งด้านธุรกิจและระบบสารสนเทศจากที่นี่ จะเป็นพื้นฐานสำคัญทั้งในการทำงานและการสร้างธุรกิจของตัวเองต่อไป</p>
+      <p>ขอบคุณที่สละเวลาพิจารณาครับ</p>
+    </div>
+  </section>
+
+  <section class="p-sec">
+    <h2>Care a Cat</h2>
+    <p>บอร์ดเกมที่ผมกับเพื่อนทีม Suthi Boy ออกแบบเพื่อประกวดในโครงการประกวดออกแบบบอร์ดเกมของ BGDT เราแข่งกันอยู่หลายเดือน ผ่านเวิร์กชอปรวม 32 ชั่วโมง ได้ร่วมจัดแสดงผลงาน เข้ารอบ 18 ทีมสุดท้าย และได้รับรางวัลชมเชย ถึงจะไม่ได้เป็นผู้ชนะของงาน แต่พวกผมก็ไม่เคยถอย</p>
+    <p><a href="https://www.facebook.com/share/p/1FxYA1aXLE/" target="_blank" rel="noopener">ดูโพสต์ผลงานบน Facebook</a></p>
+    <div class="p-grid">
+      <figure class="shot" data-art="booth-team" data-kind="ภาพถ่าย" data-ar="1.3333">
+        <button type="button"><img src="img/full/booth-team.jpg" alt="สมาชิกทีมสี่คนยืนหลังโต๊ะจัดแสดงที่มีแท็บเล็ตแสดงชื่อเกม Care a Cat และการ์ดวางเรียงบนโต๊ะ" loading="lazy" width="1080" height="810"></button>
+        <figcaption><b>ทีม Suthi Boy กับเกม Care a Cat</b><span>ทีมของผมที่โต๊ะจัดแสดงผลงานบอร์ดเกม มีแท็บเล็ตเปิดหน้าเกมและการ์ดวางเรียงให้ลองเล่น</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="sketch" data-kind="ภาพถ่าย" data-ar="1.3333">
+        <button type="button"><img src="img/full/sketch.jpg" alt="กระดาษร่างกติกาและผังเกมที่เขียนด้วยมือ วางบนโต๊ะในร้านกาแฟ" loading="lazy" width="1080" height="810"></button>
+        <figcaption><b>ร่างกติกาบนกระดาษ</b><span>จุดเริ่มต้นของ Care a Cat คือการนั่งร่างแนวคิดและกติกาลงกระดาษ</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cafe-team" data-kind="ภาพถ่าย" data-ar="1.3333">
+        <button type="button"><img src="img/full/cafe-team.jpg" alt="ถ่ายเซลฟี่ร่วมกันที่โต๊ะในร้านกาแฟ สมาชิกทีมถือกระดาษเขียนว่า Suthi Boy" loading="lazy" width="1080" height="810"></button>
+        <figcaption><b>นัดรวมทีม Suthi Boy</b><span>วันที่ทีมนัดกันทำงาน พร้อมกระดาษชื่อทีม Suthi Boy</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="booth-tablets" data-kind="ภาพถ่าย" data-ar="1.3316">
+        <button type="button"><img src="img/full/booth-tablets.jpg" alt="สมาชิกทีมสี่คนถือแท็บเล็ตที่แสดงหน้าเกม Care a Cat หลังโต๊ะที่มีการ์ดวางอยู่" loading="lazy" width="1080" height="811"></button>
+        <figcaption><b>Care a Cat บนแท็บเล็ต</b><span>สมาชิกทีมถือแท็บเล็ตที่เปิดหน้าเกม Care a Cat ที่โต๊ะจัดแสดง</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="booth-visitors" data-kind="ภาพถ่าย" data-ar="1.3316">
+        <button type="button"><img src="img/full/booth-visitors.jpg" alt="ผู้เข้าชมงานยืนถ่ายรูปร่วมกับทีมที่โต๊ะจัดแสดง" loading="lazy" width="1080" height="811"></button>
+        <figcaption><b>ผู้เข้าชมที่โต๊ะของทีม</b><span>ผู้เข้าชมงานแวะมาดูเกมและถ่ายรูปร่วมกับทีม</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="selfie-mall" data-kind="ภาพถ่าย" data-ar="1.3333">
+        <button type="button"><img src="img/full/selfie-mall.jpg" alt="ถ่ายเซลฟี่ร่วมกันห้าคนในงาน ด้านหลังมีโต๊ะจัดแสดงและป้าย Board Game Designers" loading="lazy" width="1080" height="810"></button>
+        <figcaption><b>วันงานจัดแสดง</b><span>ถ่ายรูปร่วมกันในงานประกวดออกแบบบอร์ดเกม</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="p-sec">
+    <h2>IYF Leaders Conference 2026</h2>
+    <p>ผมเข้าร่วมแข่งขันนำเสนอโครงการกับเยาวชนจากหลายประเทศ ในหัวข้อการป้องกันและลดยาเสพติด ผ่านเข้ารอบแรก และตกรอบในรอบที่สอง</p>
+    <div class="p-grid one">
+      <figure class="shot" data-ref="cert-iyf">
+        <button type="button"><img src="img/full/cert-iyf.jpg" alt="Certificate of Completion ออกให้ Sittinon Soithongdee จากงาน 2026 Leaders Conference in Thailand" loading="lazy" width="1080" height="774"></button>
+        <figcaption><b>Certificate of Completion · IYF Leaders Conference 2026</b><span>กดเพื่อดูภาพขยาย รายละเอียดอยู่ในหัวข้อเกียรติบัตรด้านล่าง</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="p-sec" id="camp">
+    <h2>ค่ายภาษาอังกฤษและจิตอาสา</h2>
+    <h3>ค่ายภาษาอังกฤษครั้งที่ 1 · นครนายก</h3>
+    <p>ค่ายฝึกและพัฒนาภาษาอังกฤษที่จัดขึ้นโดยโรงเรียน วันที่ 26–28 กุมภาพันธ์ 2025 ที่ Sida Resort จังหวัดนครนายก ปีแรกของผมในชั้น ม.ปลาย</p>
+    <blockquote class="p-quote">บางทีสิ่งที่จะทำให้เราก้าวไปข้างหน้าได้ อาจจะเป็นความล้มเหลวที่จะสอนให้เรารู้ถึงจุดอ่อนของตัวเราเอง</blockquote>
+    <div class="p-grid one">
+      <figure class="shot" data-art="camp1-group" data-kind="ภาพถ่าย" data-ar="1.55">
+        <button type="button"><img src="img/full/camp1-group.jpg" alt="นักเรียนกลุ่มใหญ่ยืนบนเวที ถือป้าย English Camp 26 ถึง 28 February 2025 at Nakhon Nayok ด้านหลังมีป้าย Watsuthiwararam School" loading="lazy" width="868" height="560"></button>
+        <figcaption><b>รูปหมู่ค่ายภาษาอังกฤษครั้งที่ 1</b><span>ถ่ายรูปหมู่หน้าป้ายค่าย English Camp ของโรงเรียนวัดสุทธิวราราม วันที่ 26–28 กุมภาพันธ์ 2025 ที่จังหวัดนครนายก</span></figcaption>
+      </figure>
+    </div>
+    <h3>ค่ายภาษาอังกฤษครั้งที่ 2 · จันทบุรี</h3>
+    <p>ค่ายฝึกและพัฒนาภาษาอังกฤษที่โรงเรียนจัดให้แผนการเรียนภาษา วันที่ 4–6 มีนาคม 2026 ที่ New Travel Beach Hotel &amp; Resort จังหวัดจันทบุรี</p>
+    <blockquote class="p-quote">สิ่งที่ผมเรียนรู้ไม่ได้มีแค่ภาษา แต่ยังเป็นการเรียนรู้ที่จะรู้จักตัวเอง</blockquote>
+    <div class="p-grid">
+      <figure class="shot" data-art="camp2-group" data-kind="ภาพถ่าย" data-ar="1.5228">
+        <button type="button"><img src="img/full/camp2-group.jpg" alt="นักเรียนและครูชูกำปั้นถ่ายรูปหมู่หน้าป้าย Intensive English Program English Camp ที่จันทบุรี" loading="lazy" width="868" height="570"></button>
+        <figcaption><b>รูปหมู่ค่ายภาษาอังกฤษครั้งที่ 2</b><span>ถ่ายรูปหมู่หน้าป้ายค่าย English Camp วันที่ 4–6 มีนาคม 2026 ที่จังหวัดจันทบุรี</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="camp2-beach" data-kind="ภาพถ่าย" data-ar="0.75">
+        <button type="button"><img src="img/full/camp2-beach.jpg" alt="ออมสินนั่งยองบนหาดทรายช่วงน้ำลง ด้านหลังมีชื่อ AOM เขียนไว้บนทราย ไกลออกไปเป็นทะเลและเกาะ" loading="lazy" width="810" height="1080"></button>
+        <figcaption><b>เขียนชื่อบนหาดทราย</b><span>ผมกับชื่อ AOM ที่เขียนไว้บนหาดทราย ช่วงค่ายภาษาอังกฤษครั้งที่ 2 ที่จันทบุรี</span></figcaption>
+      </figure>
+    </div>
+    <h3>เยาวชนจิตอาสา</h3>
+    <p>ผมผ่านการอบรมในโครงการเยาวชนจิตอาสา ลดพฤติกรรมเสี่ยงต่อการติดเชื้อเอชไอวี โรคติดต่อทางเพศสัมพันธ์ และส่งเสริมการป้องกันโรคในสถานศึกษา ประจำปี 2568 ของศูนย์วิจัยโรคเอดส์และโรคติดเชื้อ สภากาชาดไทย</p>
+    <div class="p-grid one">
+      <figure class="shot" data-art="volunteer-group" data-kind="ภาพถ่าย" data-ar="1.5">
+        <button type="button"><img src="img/full/volunteer-group.jpg" alt="นักเรียนห้าคนในชุดนักเรียนยืนถ่ายรูปกับผู้ใหญ่สองคน หน้าฉากงานที่มีชื่อโครงการเยาวชนจิตอาสา" loading="lazy" width="1080" height="720"></button>
+        <figcaption><b>หน้าฉากงานโครงการเยาวชนจิตอาสา</b><span>ถ่ายรูปหมู่หน้าฉากงานโครงการเยาวชนจิตอาสา ลดพฤติกรรมเสี่ยงต่อการติดเชื้อเอชไอวี โรคติดต่อทางเพศสัมพันธ์ และส่งเสริมการป้องกันโรคในสถานศึกษา</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="p-sec" id="certs">
+    <h2>เกียรติบัตร 8 ใบ</h2>
+    <p>เรียงตามวันที่บนเกียรติบัตร จากค่ายภาษาครั้งแรกจนถึงวันรับรางวัล</p>
+    <div class="p-grid">
+      <figure class="shot" data-art="cert-camp1" data-kind="เกียรติบัตร" data-ar="1.3846">
+        <button type="button"><img src="img/full/cert-camp1.jpg" alt="Certificate of Achievement ออกให้ Mr. Sittinon Soithongdee สำหรับการเข้าร่วม English Day Camp" loading="lazy" width="1080" height="780"></button>
+        <figcaption><b>Certificate of Achievement · English Day Camp</b><span>ออกให้สำหรับการเข้าร่วม English Day Camp วันที่ 26–28 กุมภาพันธ์ 2025 ที่ Sida Resort นครนายก</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-volunteer" data-kind="เกียรติบัตร" data-ar="1.3918">
+        <button type="button"><img src="img/full/cert-volunteer.jpg" alt="เกียรติบัตรจากศูนย์วิจัยโรคเอดส์และโรคติดเชื้อ สภากาชาดไทย ออกให้นายสิทธินนท์ สร้อยทองดี โรงเรียนวัดสุทธิวราราม" loading="lazy" width="1080" height="776"></button>
+        <figcaption><b>เยาวชนจิตอาสา · สภากาชาดไทย</b><span>ศูนย์วิจัยโรคเอดส์และโรคติดเชื้อ สภากาชาดไทย มอบให้ในฐานะเยาวชนจิตอาสาผู้ผ่านการอบรม ในโครงการเยาวชนจิตอาสา ลดพฤติกรรมเสี่ยงต่อการติดเชื้อเอชไอวี โรคติดต่อทางเพศสัมพันธ์ และส่งเสริมการป้องกันโรคในสถานศึกษา ประจำปี 2568 ให้ไว้ ณ วันที่ 29 สิงหาคม 2568</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-iyf" data-kind="เกียรติบัตร" data-ar="1.3953">
+        <button type="button"><img src="img/full/cert-iyf.jpg" alt="Certificate of Completion ออกให้ Sittinon Soithongdee จากงาน 2026 Leaders Conference in Thailand" loading="lazy" width="1080" height="774"></button>
+        <figcaption><b>Certificate of Completion · IYF Leaders Conference 2026</b><span>2026 Leaders Conference in Thailand หัวข้อ Youth for Social Change จัดโดย International Youth Fellowship และ Tomorrow International Institute วันที่ 26 ถึง 27 กุมภาพันธ์ 2026 ณ Golden Jubilee Museum of Agriculture</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-camp2" data-kind="เกียรติบัตร" data-ar="1.3568">
+        <button type="button"><img src="img/full/cert-camp2.jpg" alt="Certificate of Achievement ออกให้นายสิทธินนท์ สร้อยทองดี สำหรับการเข้าร่วม English Camp" loading="lazy" width="1080" height="796"></button>
+        <figcaption><b>Certificate of Achievement · English Camp</b><span>ออกให้สำหรับการเข้าร่วม English Camp วันที่ 4–6 มีนาคม 2026 ที่ New Travel Beach Hotel &amp; Resort จันทบุรี</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-ws12" data-kind="เกียรติบัตร" data-ar="1.4136">
+        <button type="button"><img src="img/full/cert-ws12.jpg" alt="เกียรติบัตรผ่าน Workshop ออกแบบบอร์ดเกม ครั้งที่ 1 ถึง 2 จำนวน 16 ชั่วโมง" loading="lazy" width="1080" height="764"></button>
+        <figcaption><b>Workshop ออกแบบบอร์ดเกม #1-2</b><span>16 ชั่วโมง วันที่ 25 ถึง 26 กรกฎาคม 2569 เรื่องการออกแบบตัวละคร วิธีเล่น ตัวต้นแบบ และการทดสอบเบื้องต้น</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-ws3" data-kind="เกียรติบัตร" data-ar="1.4136">
+        <button type="button"><img src="img/full/cert-ws3.jpg" alt="เกียรติบัตรผ่าน Workshop ออกแบบบอร์ดเกม ครั้งที่ 3 จำนวน 16 ชั่วโมง" loading="lazy" width="1080" height="764"></button>
+        <figcaption><b>Workshop ออกแบบบอร์ดเกม #3</b><span>16 ชั่วโมง วันที่ 29 ถึง 30 สิงหาคม 2569 เรื่องการทดสอบเกม การรับและคัดเลือกฟีดแบค และการนำฟีดแบคมาพัฒนาตัวต้นแบบ</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-final18" data-kind="เกียรติบัตร" data-ar="1.4136">
+        <button type="button"><img src="img/full/cert-final18.jpg" alt="เกียรติบัตรร่วมจัดแสดงผลงานบอร์ดเกมและเข้ารอบ 18 ทีมสุดท้าย" loading="lazy" width="1080" height="764"></button>
+        <figcaption><b>เข้ารอบ 18 ทีมสุดท้าย</b><span>ผ่านการร่วมจัดแสดงผลงานบอร์ดเกม และเข้ารอบ 18 ทีมสุดท้าย ในโครงการประกวดออกแบบบอร์ดเกม ครั้งที่ 4</span></figcaption>
+      </figure>
+      <figure class="shot" data-art="cert-honor" data-kind="เกียรติบัตร" data-ar="1.4136">
+        <button type="button"><img src="img/full/cert-honor.jpg" alt="เกียรติบัตรรางวัลชมเชย ออกให้นายสิทธินนท์ สร้อยทองดี ทีม Suthi Boy" loading="lazy" width="1080" height="764"></button>
+        <figcaption><b>รางวัลชมเชย</b><span>โครงการประกวดออกแบบบอร์ดเกม ครั้งที่ 4 หัวข้อ “มาสคอต (Mascot)” ทีม Suthi Boy ตัดสินวันที่ 19 ถึง 20 กันยายน 2569 ณ ศูนย์การค้าซีคอนสแควร์ ศรีนครินทร์</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="p-sec p-contact">
+    <h2>มาคุยกัน</h2>
+    <p>หลังสำเร็จการศึกษา ผมตั้งเป้าหมายที่จะทำงานเป็นนักวิเคราะห์ระบบหรือนักวิเคราะห์ข้อมูลทางธุรกิจ พร้อมเก็บออมเงินประมาณ 5–10 ปี เพื่อนำมาเป็นทุนก่อตั้งธุรกิจของตัวเอง</p>
+    <p>สิทธินนท์ สร้อยทองดี (ออมสิน) โรงเรียนวัดสุทธิวราราม ยื่นสมัครสาขาวิชานวัตกรรมระบบสารสนเทศ คณะบริหารธุรกิจ มทร.กรุงเทพ</p>
+    <a class="btn" href="https://instagram.com/medeow_GT" target="_blank" rel="noopener">Instagram @medeow_GT</a>
+  </section>
+</main>
+
+<script type="module" src="js/boot.js"></script>
+</body>
+</html>
